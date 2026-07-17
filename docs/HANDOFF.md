@@ -43,8 +43,7 @@ ai-web-tracker/
 │   ├── example-single-phase.js  Demo: Hacker News Jobs (list page has everything)
 │   ├── example-two-phase.js     Demo: RemoteOK (list page + per-entity detail page)
 │   ├── weworkremotely.js        We Work Remotely (list + detail)
-│   ├── euremotejobs.js          EU Remote Jobs (list + detail)
-│   └── aijobs.js                aijobs.com (list + detail)
+│   └── euremotejobs.js          EU Remote Jobs (list + detail)
 ├── filters/
 │   ├── keyword-filter.js      Match title against a word list
 │   ├── minus-word-filter.js   Reject title matching a word list

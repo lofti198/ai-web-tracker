@@ -6,7 +6,6 @@ import * as exampleSinglePhase from './example-single-phase.js';
 import * as exampleTwoPhase from './example-two-phase.js';
 import * as weworkremotely from './weworkremotely.js';
 import * as euremotejobs from './euremotejobs.js';
-import * as aijobs from './aijobs.js';
 
 export const SOURCES = {
   'example-single-phase': {
@@ -32,12 +31,6 @@ export const SOURCES = {
     listUrls: euremotejobs.listUrls,
     extractLinks: euremotejobs.extractLinks,
     extractDetail: euremotejobs.extractDetail,
-  },
-  aijobs: {
-    originPattern: aijobs.originPattern,
-    listUrls: aijobs.listUrls,
-    extractLinks: aijobs.extractLinks,
-    extractDetail: aijobs.extractDetail,
   },
 };
 

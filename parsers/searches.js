@@ -2,7 +2,6 @@ import * as exampleSinglePhase from './example-single-phase.js';
 import * as exampleTwoPhase from './example-two-phase.js';
 import * as weworkremotely from './weworkremotely.js';
 import * as euremotejobs from './euremotejobs.js';
-import * as aijobs from './aijobs.js';
 
 const SEARCHES_KEY = 'searches.saved';
 const DISABLED_SEARCHES_KEY = 'searches.disabled';
@@ -39,13 +38,6 @@ export const SUPPORTED_SOURCES = {
     originPattern: euremotejobs.originPattern,
     extractLinks: euremotejobs.extractLinks,
     extractDetail: euremotejobs.extractDetail,
-  },
-  aijobs: {
-    label: 'aijobs.com',
-    origin: 'https://www.aijobs.com',
-    originPattern: aijobs.originPattern,
-    extractLinks: aijobs.extractLinks,
-    extractDetail: aijobs.extractDetail,
   },
 };
 

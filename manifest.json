@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "AI Web Tracker",
-  "version": "1.7.38",
+  "version": "1.7.39",
   "description": "Manually scans websites on demand, filters new items by keywords/exclude words/AI, and shows findings in a dedicated tab.",
   "permissions": ["storage", "tabs", "scripting", "webNavigation"],
   "host_permissions": [
@@ -9,7 +9,6 @@
     "https://news.ycombinator.com/*",
     "https://weworkremotely.com/*",
     "https://euremotejobs.com/*",
-    "https://www.aijobs.com/*",
     "https://api.openai.com/*"
   ],
   "optional_host_permissions": ["https://*/*", "http://*/*"],

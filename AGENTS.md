@@ -92,7 +92,6 @@ Current built-ins (all registered in both files):
 - `example-two-phase`: Remote OK jobs, list page plus detail extraction (demo/template).
 - `weworkremotely`: We Work Remotely, list page plus detail extraction.
 - `euremotejobs`: EU Remote Jobs, list page plus detail extraction.
-- `aijobs`: aijobs.com, list page plus detail extraction.
 
 Saved searches added from the UI live in `chrome.storage.local` under
 `searches.saved`. The Add search dialog intentionally asks only for `Name` and
