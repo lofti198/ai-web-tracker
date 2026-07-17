@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "AI Web Tracker",
+  "version": "1.7.38",
+  "description": "Manually scans websites on demand, filters new items by keywords/exclude words/AI, and shows findings in a dedicated tab.",
+  "permissions": ["storage", "tabs", "scripting", "webNavigation"],
+  "host_permissions": [
+    "https://remoteok.com/*",
+    "https://news.ycombinator.com/*",
+    "https://weworkremotely.com/*",
+    "https://euremotejobs.com/*",
+    "https://www.aijobs.com/*",
+    "https://api.openai.com/*"
+  ],
+  "optional_host_permissions": ["https://*/*", "http://*/*"],
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

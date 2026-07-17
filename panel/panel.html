@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Web Tracker</title>
+  <link rel="stylesheet" href="panel.css" />
+</head>
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <div id="app-loading" class="app-loading" role="status" aria-live="polite">
+    <span class="spinner app-loading-spinner" aria-hidden="true"></span>
+    <span>Loading panel...</span>
+  </div>
+
+  <header class="app-header">
+    <h1>AI Web Tracker</h1>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button type="button" class="tab-button active" data-tab-target="main">Main</button>
+    <button type="button" class="tab-button" data-tab-target="searches">Searches</button>
+    <button type="button" class="tab-button" data-tab-target="filters">Filters</button>
+    <button type="button" class="tab-button" data-tab-target="history">History</button>
+    <button type="button" class="tab-button" data-tab-target="profile">Setting</button>
+  </nav>
+
+  <main>
+    <section class="tab-panel active" data-tab-panel="main">
+      <div class="actions-row">
+        <button type="button" id="toggle-run" class="btn btn-primary">Scan now</button>
+        <button type="button" id="stop-run" class="btn btn-danger" disabled>Stop</button>
+        <div class="main-view-actions">
+          <button type="button" id="open-logs" class="btn btn-secondary">Logs</button>
+        </div>
+      </div>
+
+      <div id="progress-panel" class="progress-panel" hidden>
+        <div class="progress-current">
+          <span class="spinner" aria-hidden="true"></span>
+          <span id="progress-current-text"></span>
+        </div>
+        <ul id="progress-recent" class="progress-recent"></ul>
+      </div>
+
+      <div class="stats-row">
+        <span id="last-run">Last run: —</span>
+      </div>
+
+      <section id="just-found-section" hidden>
+        <h2 id="just-found-title" class="section-title">Just found</h2>
+        <ul id="just-found-list" class="items-list"></ul>
+      </section>
+    </section>
+
+    <section class="tab-panel" data-tab-panel="searches">
+      <div class="section-header-row">
+        <h2 class="section-title">Saved searches</h2>
+        <button type="button" id="open-add-search" class="btn btn-secondary btn-small">+ Add search</button>
+      </div>
+      <ul id="searches-list" class="searches-list"></ul>
+    </section>
+
+    <section class="tab-panel" data-tab-panel="filters">
+      <section class="filter-section">
+        <div class="filter-header">
+          <label class="switch">
+            <input type="checkbox" id="keyword-enabled" />
+            <span class="slider"></span>
+          </label>
+          <h2>Keyword filter</h2>
+        </div>
+        <p class="hint">An item passes if the title contains at least one of these words.</p>
+        <textarea id="keyword-words" rows="3" placeholder="react, remote, frontend"></textarea>
+      </section>
+
+      <section class="filter-section">
+        <div class="filter-header">
+          <label class="switch">
+            <input type="checkbox" id="minus-enabled" />
+            <span class="slider"></span>
+          </label>
+          <h2>Exclude words</h2>
+        </div>
+        <p class="hint">An item is dropped if the title contains any of these words.</p>
+        <textarea id="minus-words" rows="3" placeholder="intern, unpaid"></textarea>
+      </section>
+
+      <section class="filter-section">
+        <div class="filter-header">
+          <label class="switch">
+            <input type="checkbox" id="ai-enabled" />
+            <span class="slider"></span>
+          </label>
+          <h2>AI filter</h2>
+        </div>
+
+        <div class="field-row">
+          <label for="ai-prompt">Selection criteria (in your own words)</label>
+          <textarea id="ai-prompt" rows="3" placeholder="Keep only positions with relocation to Europe"></textarea>
+        </div>
+        <p class="hint">
+          The full item description (when collected) is passed to the model
+          too, not just the title — and your CV text from the Setting tab,
+          if you've added one.
+        </p>
+
+        <p id="ai-warning" class="warning" hidden>
+          Enable the AI filter only after adding an OpenAI API key on the
+          Setting tab.
+        </p>
+      </section>
+
+    </section>
+
+    <section class="tab-panel" data-tab-panel="history">
+      <section class="filter-section">
+        <label class="checkbox-row" for="history-enabled">
+          <input type="checkbox" id="history-enabled" />
+          <span>Use history</span>
+        </label>
+        <p class="hint">
+          When enabled, found jobs are saved here and already known links are
+          skipped during scanning. When disabled, history is not saved and not
+          used for duplicate checks.
+        </p>
+      </section>
+
+      <div class="stats-row">
+        <span>Total found: <strong id="history-total-count">0</strong></span>
+      </div>
+
+      <div class="actions-row">
+        <button type="button" id="clear-history" class="btn btn-secondary">Clear history</button>
+      </div>
+
+      <ul id="items-list" class="items-list"></ul>
+      <p id="items-empty" class="empty-state">Nothing found yet. Go to the Main tab and click "Scan now".</p>
+    </section>
+
+    <section class="tab-panel" data-tab-panel="profile">
+      <section class="filter-section">
+        <h2>OpenAI API key</h2>
+        <div class="field-row">
+          <label for="ai-api-key">API key</label>
+          <div class="key-input-row">
+            <input type="password" id="ai-api-key" placeholder="sk-..." autocomplete="off" />
+            <button type="button" id="ai-key-toggle" class="btn btn-secondary">Show</button>
+          </div>
+        </div>
+        <p class="hint">
+          Used only by the AI filter (Filters tab). Stored locally in this
+          browser and never sent anywhere except api.openai.com.
+        </p>
+      </section>
+
+      <section class="filter-section">
+        <h2>Scan limits</h2>
+        <div class="scan-limit-row">
+          <label class="checkbox-row" for="scan-limit-enabled">
+            <input type="checkbox" id="scan-limit-enabled" />
+            <span>Limit maximum number of found jobs from one search</span>
+          </label>
+          <input type="number" id="scan-max-entities" min="1" step="1" value="10" />
+        </div>
+        <p class="hint">
+          When enabled, the scanner keeps checking top links until this many
+          matching jobs are found, or until the list ends. We assume the top
+          links are the freshest jobs.
+        </p>
+      </section>
+
+      <!--
+      <section class="filter-section">
+        <h2>Resume / CV</h2>
+        <p class="hint">
+          Attach one or more files for reference (e.g. different resumes
+          for different types of roles), and/or paste text below — the
+          pasted text is what actually gets used by the AI filter (see
+          Filters tab). Only <code>.txt</code> attachments are read
+          automatically; for PDF/DOCX, open the file yourself and paste its
+          text in — this extension can't parse those formats without adding
+          a third-party library, which conflicts with the no-build-step
+          design (see AGENTS.md).
+        </p>
+
+        <div class="field-row">
+          <label for="cv-file-input">Attach file(s)</label>
+          <input type="file" id="cv-file-input" accept=".txt,.pdf,.doc,.docx" multiple />
+        </div>
+
+        <ul id="cv-attached-list" class="cv-attached-list"></ul>
+
+        <div class="field-row">
+          <label for="cv-text">CV text</label>
+          <textarea id="cv-text" rows="8" placeholder="Paste your resume/CV text here"></textarea>
+        </div>
+      </section>
+      -->
+
+    </section>
+
+    <dialog id="history-dialog-disabled" class="viewer-dialog">
+      <div class="dialog-header">
+        <h2 class="section-title">History</h2>
+        <button type="button" id="close-history" class="dialog-close" aria-label="Close">✕</button>
+      </div>
+      <div class="dialog-body">
+      <div class="stats-row">
+        <span>Total found: <strong id="history-total-count-disabled">0</strong></span>
+      </div>
+
+      <div class="actions-row">
+        <button type="button" id="clear-history-disabled" class="btn btn-secondary">Clear history</button>
+      </div>
+
+      <ul id="items-list-disabled" class="items-list"></ul>
+      <p id="items-empty-disabled" class="empty-state">Nothing found yet. Go to the Main tab and click "Scan now".</p>
+      </div>
+    </dialog>
+
+    <dialog id="logs-dialog" class="viewer-dialog">
+      <div class="dialog-header">
+        <h2 class="section-title">Logs</h2>
+        <button type="button" id="close-logs" class="dialog-close" aria-label="Close">✕</button>
+      </div>
+      <div class="dialog-body">
+      <div class="actions-row">
+        <button type="button" id="clear-logs" class="btn btn-secondary">Clear logs</button>
+      </div>
+
+      <ul id="logs-list" class="logs-list"></ul>
+      <p id="logs-empty" class="empty-state">No log entries yet.</p>
+      </div>
+    </dialog>
+  </main>
+
+  <dialog id="add-search-dialog" class="add-search-dialog">
+    <div class="dialog-header">
+      <h2 id="search-dialog-title" class="section-title">Add search</h2>
+      <button type="button" id="close-add-search" class="dialog-close" aria-label="Close">✕</button>
+    </div>
+
+    <div class="dialog-body">
+      <div class="field-row">
+        <label for="search-name">Name</label>
+        <input type="text" id="search-name" placeholder="ai developer" autocomplete="off" />
+      </div>
+
+      <div class="field-row">
+        <label for="search-list-urls">List URLs (one per line)</label>
+        <textarea
+          id="search-list-urls"
+          rows="3"
+          placeholder="https://example.com/listing?region=eu&#10;https://example.com/listing?region=us"
+        ></textarea>
+      </div>
+
+      <p id="add-search-error" class="warning" hidden></p>
+    </div>
+
+    <div class="dialog-footer actions-row">
+      <button type="button" id="save-search" class="btn btn-primary">Add search</button>
+      <button type="button" id="cancel-add-search" class="btn btn-secondary">Cancel</button>
+    </div>
+  </dialog>
+
+  <script type="module" src="tabs.js"></script>
+  <script type="module" src="tab-main.js"></script>
+  <script type="module" src="tab-searches.js"></script>
+  <script type="module" src="tab-filters.js"></script>
+  <script type="module" src="tab-profile.js"></script>
+  <script type="module" src="tab-history.js"></script>
+  <script type="module" src="tab-logs.js"></script>
+</body>
+</html>
+
